@@ -46,4 +46,4 @@ Rscript ABBA-BABA_evobiR.R file1.fasta file2.fasta file3.fasta
 ```
 [example.fasta](population-genetic-analyses/example.fasta) - an example fasta file. Note, missing data is not allowed.
 
-**Block-jackknifing** can be adjusted in the script with options `block.size` and `replicate`. For more options, see `?CalcD`.
+**Block-jackknifing** can be adjusted in the script with options `block.size` and `replicate`. For more options, run `?CalcD` within `R`.
