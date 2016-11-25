@@ -1,12 +1,13 @@
 # ABBA-BABA test for introgression
 
-For the detain on the test see Durand, Eric Y., et al. Testing for ancient admixture between closely related populations. Molecular biology and evolution 28.8 (2011): 2239-2252.
+
+The description of the test is provided in [Durand et al. 20111](http://mbe.oxfordjournals.org/content/28/8/2239.short).
 
 The analysis can be performed in two ways:
 
 ## On a set of samples
 
-The scripts for this analysis are taken from [Martin et al. (2013)](http://datadryad.org/resource/doi:10.5061/dryad.dk712) with modifications.
+The scripts are taken from [Martin et al. (2013)](http://datadryad.org/resource/doi:10.5061/dryad.dk712) with modifications.
 
 ### Generate derived allele frequency file
 
@@ -38,7 +39,7 @@ groupA	groupB	groupC
 
 [ABBA-BABA_evobiR.R](population-genetic-analyses/ABBA-BABA_evobiR.R) performs analysis on single sequence basis in a fasta format using [evobiR](https://cran.r-project.org/web/packages/evobiR/index.html).
 
-The script can be run on many fasta files with:
+The script can be run on many fasta files:
 
 ```
 Rscript ABBA-BABA_evobiR.R file1.fasta file2.fasta file3.fasta
