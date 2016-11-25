@@ -15,7 +15,7 @@ The scripts are taken from [Martin et al. (2013)](http://datadryad.org/resource/
 python freq.py -i genotypeCallsFile.tab -o genotypeCallsFile.freq -p "groupA[sample1,sample2,sample3];groupB[sample4,sample5,sample6];groupC[sample7,sample8,sample9];groupD[sample10];groupG[sample11,sample12]" -a derived -O groupD
 ```
 
-See [freq.py](population-genetic-analyses/ABBA-BABA/freq.py) for more details.
+See [freq.py](freq.py) for more details.
 
 
 ### Run ABBA-BABA
