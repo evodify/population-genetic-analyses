@@ -1,7 +1,7 @@
 # ABBA-BABA test for introgression
 
 
-The description of the test is provided in [Durand et al. 20111](http://mbe.oxfordjournals.org/content/28/8/2239.short).
+The description of the test is provided in [Durand et al. 2011](http://mbe.oxfordjournals.org/content/28/8/2239.short).
 
 The analysis can be performed in two ways:
 
@@ -24,7 +24,7 @@ See [freq.py](population-genetic-analyses/ABBA-BABA/freq.py) for more details.
 Rscript ABBA_BABA_jackknife.r genotypeCallsFile.freq tests.csv 
 ```
 
-where `genotypeCallsFile.freq` is the file obtained in the previous step. `test.csv` is a fine defining tests to perform.
+where `genotypeCallsFile.freq` is the file obtained in the previous step. `test.csv` is a file defining tests to perform.
   
 An example of `test.csv`:
 ```
@@ -46,4 +46,4 @@ Rscript ABBA-BABA_evobiR.R file1.fasta file2.fasta file3.fasta
 ```
 [example.fasta](population-genetic-analyses/example.fasta) - an example fasta file. Note, missing data is not allowed.
 
-**Block-jackknifing** can be adjusted in the script with options `block.size` and `replicate`.
+**Block-jackknifing** can be adjusted in the script with options `block.size` and `replicate`. For more options, see `?CalcD`.
