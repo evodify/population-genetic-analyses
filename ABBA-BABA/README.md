@@ -37,13 +37,13 @@ groupA	groupB	groupC
 ## On separate sequences
 
 
-[ABBA-BABA_evobiR.R](population-genetic-analyses/ABBA-BABA_evobiR.R) performs analysis on single sequence basis in a fasta format using [evobiR](https://cran.r-project.org/web/packages/evobiR/index.html).
+[ABBA-BABA_evobiR.R](ABBA-BABA_evobiR.R) performs analysis on single sequence basis in a fasta format using [evobiR](https://cran.r-project.org/web/packages/evobiR/index.html).
 
 The script can be run on many fasta files:
 
 ```
 Rscript ABBA-BABA_evobiR.R file1.fasta file2.fasta file3.fasta
 ```
-[example.fasta](population-genetic-analyses/example.fasta) - an example fasta file. Note, missing data is not allowed.
+[example.fasta](example.fasta) - an example fasta file. Note, missing data is not allowed.
 
 **Block-jackknifing** can be adjusted in the script with options `block.size` and `replicate`. For more options, run `?CalcD` within `R`.
