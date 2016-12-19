@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 '''
-This script reconstruct site frequency spectrum
+This script reconstructs site frequency spectrum for a given set of samples.
 
 use
 python selectFstPeaks.py -i calls.file -o output.file
