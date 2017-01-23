@@ -41,9 +41,14 @@ Derived-allele-freq Number-of-sites
 
 The histograms of SFS is also produced.
 
+
 # command
 
 $ python SFS.py -i input.file -o output.file -a ancestor.file
+
+Optionally samples can be specified with -s "sample1,sample2...sampleN"
+
+To use sites with missing data, specify number of allowed Ns. This will produced reduced SFS by using subsampling from hypergeometric distribution. (Hernandez, Ryan D., et al. "Context-dependent mutation rates may cause spurious signatures of a fixation bias favoring higher GC-content in humans." Molecular biology and evolution 24.10 (2007): 2196-2202.)
 
 contact Dmytro Kryvokhyzha dmytro.kryvokhyzha@evobio.eu
 '''
@@ -63,11 +68,19 @@ parser = calls.MyParser()
 parser.add_argument('-i', '--input', help = 'name of the input file', type=str, required=True)
 parser.add_argument('-o', '--output', help = 'name of the output file', type=str, required=True)
 parser.add_argument('-a', '--ancestor', help = 'name of the file with ancestral sequence to polarize alleles', type=str, required=True)
+parser.add_argument('-m', '--missing', help = 'allowed number of missing data', type=int, required=False)
 parser.add_argument('-s', '--samples', help = 'column names of the samples to process (optional)', type=str, required=False)
 args = parser.parse_args()
 
 # check if samples names are given and if all sample names are present in a header
 sampleNames = calls.checkSampleNames(args.samples, args.input)
+
+# check the missing data threshold
+if args.missing:
+  AlowedN = int(args.missing)
+else:
+  AlowedN = 0
+  print 'The option "-m" is not specified. All sites with missing data will be skipped.'
 
 ############################# program #############################
 
@@ -89,6 +102,7 @@ with open(args.input) as datafile:
 
   # index samples
   sampCol = calls.indexSamples(sampleNames, header_words)
+  maxGenot = len(sampleNames) - AlowedN
 
   for line in datafile:
     words = line.split()
@@ -101,11 +115,17 @@ with open(args.input) as datafile:
       print str(counter), "lines processed"
       
     # select samples
-    genotypes = calls.selectSamples(sampCol, words)
-
+    genotypesN = calls.selectSamples(sampCol, words)
+    
     # skip sites with missing data
-    if 'N' in genotypes:
-      continue
+    numN =  calls.countPerPosition(genotypesN, 'N')
+    if numN <= AlowedN: 
+      genotypes = [i for i in genotypesN if i != 'N']
+      nGenotypes = len(genotypes)
+    else:
+      continue # skip lines with too many Ns
+    
+    # count alleles
     numAl = collections.Counter(genotypes)
     numAlM = numAl.most_common()
 
@@ -119,7 +139,7 @@ with open(args.input) as datafile:
         ref_ch = int(ref_chr_pos[0].split('_')[1])
         ref_pos = int(ref_chr_pos[1])
         ancest = words2[2]
-
+ 
     if ancest == 'N':  # skip unpolarized sites
       continue
     elif len(numAl) == 1:  # if fixed
@@ -127,16 +147,25 @@ with open(args.input) as datafile:
       if al1 == ancest:
         freq.append(0)
       else:
-        x1 = numAlM[0][1]
+        n1 = numAlM[0][1]
+        x1 = np.random.hypergeometric(n1, nGenotypes-n1, maxGenot, 1)[0] # subsample
         freq.append(x1)
     elif len(numAl) == 2:  # if biallelic
       al1 = numAlM[0][0]
       al2 = numAlM[1][0]
       if al2 == ancest:
-        x1 = numAlM[0][1]
+        if nGenotypes == maxGenot:
+          x1 = numAlM[0][1]
+        else:
+          n1 = numAlM[0][1]
+          x1 = np.random.hypergeometric(n1, nGenotypes-n1, maxGenot, 1)[0] # subsample
         freq.append(x1)
       elif al1 == ancest:
-        x2 = numAlM[1][1]
+        if nGenotypes == maxGenot:
+          x2 = numAlM[1][1]
+        else:
+          n2 = numAlM[1][1]
+          x2 = np.random.hypergeometric(n2, nGenotypes-n2, maxGenot, 1)[0] # subsample
         freq.append(x2)
 
   SFSnum = collections.Counter(freq)
@@ -146,17 +175,17 @@ with open(args.input) as datafile:
     output.write("%s\t%s\n" % (key, value))
 
 # Plot frequency
-bins = np.arange(len(sampCol)+1)[1:]-0.5
+bins = np.arange(maxGenot+1)[1:]-0.5
 heightF = 6
 # increase figure width if the number of samples is too large
-if len(sampCol) > 50:
-  widthF = float(len(sampCol))/5.0
+if maxGenot > 50:
+  widthF = maxGenot/5.0
 else:
   widthF = 8
 plt.figure(figsize=(widthF, heightF))
 plt.hist(freq, color="grey", bins=bins)
-plt.xlim(0.5, len(sampCol)-0.5)
-plt.xticks(range(1,len(sampCol), 1))
+plt.xlim(0.5, maxGenot-0.5)
+plt.xticks(range(1,maxGenot, 1))
 plt.ylabel("Number of sites")
 plt.xlabel("Derived allele frequency")
 plt.title(args.output, size = 18)
