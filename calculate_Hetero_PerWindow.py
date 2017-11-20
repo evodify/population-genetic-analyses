@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 '''
-This script calculates number of positions with missing data (Ns) using sliding window approach.
+This script calculates heterozygosity with the sliding window approach.
 
 #Example input:
 
