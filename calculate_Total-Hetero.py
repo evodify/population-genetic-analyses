@@ -90,7 +90,6 @@ with open(args.input) as datafile:
 
   # count number of sample
   nSample = len(sampleNames)
-
 ############################## perform counting ####################
 
   print('Counting heterozygots ...')
@@ -101,7 +100,7 @@ with open(args.input) as datafile:
 
     # select samples
     sample_charaters = calls.selectSamples(sampCol, words)
-    
+
     # check if one- or two-character code
     if any(["/" in gt for gt in sample_charaters]):
       sample_charaters = calls.twoToOne(sample_charaters)

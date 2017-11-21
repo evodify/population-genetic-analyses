@@ -21,6 +21,25 @@ chr_3   3   N   N   N   N   N   N   N   N   N
 chr_3   4   N   T   T   N   T   T   T   T   N
 chr_3   5   G   -   N   N   G   G   G   C   G
 
+
+#Example input2:
+
+CHROM POS REF sample1 sample2 sample3 sample4 sample5 sample6 sample7 sample8
+chr_1 1 A/A A/T ./. ./. A/A ./. ./. ./. ./.
+chr_1 2 C/C T/C T/C ./. C/C C/C ./. C/C ./.
+chr_1 3 C/C ./. C/C ./. C/C C/C C/C C/C C/C
+chr_1 4 T/T T/T T/T ./. T/T T/T T/T T/T T/T
+chr_2 1 A/A A/A A/A ./. A/A A/A A/A A/A A/A
+chr_2 2 C/C C/C C/C ./. C/C C/C C/C C/C C/C
+chr_2 3 C/C ./. ./. ./. ./. ./. ./. ./. ./.
+chr_2 4 C/C C/C T/T C/C C/C C/C C/C C/C C/C
+chr_2 5 T/T T/T C/C T/T T/C T/T T/C T/T T/T
+chr_3 1 G/G G/G ./. ./. G/G ./. ./. ./. ./.
+chr_3 2 C/C G/C C/C ./. C/C C/C ./. C/C ./.
+chr_3 3 ./. ./. ./. ./. ./. ./. ./. ./. ./.
+chr_3 4 ./. T/T T/T ./. T/T T/T T/T T/T ./.
+chr_3 5 G/G -/- ./. ./. G/G G/G G/G C/C G/G
+
 #Example output:
 
 CHROM   POS Ns
@@ -86,7 +105,7 @@ with open(args.input) as datafile:
 
   # index samples
   sampCol = calls.indexSamples(sampleNames, header_words)
-  
+
   # count number of sample
   nSample = len(sampleNames)
 
@@ -119,16 +138,26 @@ with open(args.input) as datafile:
     # select samples
     sample_charaters = calls.selectSamples(sampCol, words)
 
+    # check if one- or two-character code
+    if any(["/" in gt for gt in sample_charaters]):
+      sample_charaters = calls.twoToOne(sample_charaters)
+
     # if window size is reached output the results
     if Chr > ChrPrevious:  # if end of a chromosome
-      HeterWindow = meanWindow(Hwindow, Twindow)
+      try:
+        HeterWindow = round(meanWindow(Hwindow, Twindow), 4)
+      except Exception:
+        HeterWindow = "NA"
       calls.processWindow(ChrPrevious, posS, posE, HeterWindow, outputFile)
       windPosEnd = windSize
       Hwindow = []
       Twindow = []
       posS = pos
     elif pos > windPosEnd:  # if end of a window
-      HeterWindow = meanWindow(Hwindow, Twindow)
+      try:
+        HeterWindow = round(meanWindow(Hwindow, Twindow), 4)
+      except Exception:
+        HeterWindow = "NA"
       calls.processWindow(Chr, posS, posE, HeterWindow, outputFile)
       windPosEnd = windPosEnd+windSize
       Hwindow = []
@@ -154,7 +183,10 @@ with open(args.input) as datafile:
       print str(counter), "lines processed"
 
 # process the last window
-HeterWindow = meanWindow(Hwindow, Twindow)
+try:
+  HeterWindow = round(meanWindow(Hwindow, Twindow), 4)
+except Exception:
+  HeterWindow = "NA"
 calls.processWindow(Chr, posS, pos, HeterWindow, outputFile)
 
 datafile.close()
