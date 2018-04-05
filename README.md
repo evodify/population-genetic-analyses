@@ -5,6 +5,8 @@ This repository contains a set of tools to perform various population genetic an
 
 [calculate_Hetero_PerWindow.py](calculate_Hetero_PerWindow.py) calculates heterozygosity with the sliding window approach.
 
+[calculate_FixedHetero_PerWindow.py](calculate_FixedHetero_PerWindow.py) calculates fixed heterozygosity (exist in hybrids) with the sliding window approach.
+
 [calculate_Total-Hetero.py](calculate_Total-Hetero.py) calculates total heterozygosity.
 
 [mutMatrix.py](mutMatrix.py) estimates a mutation matrix required for [LDhelmet](http://dx.doi.org/10.1371/journal.pgen.1003090).

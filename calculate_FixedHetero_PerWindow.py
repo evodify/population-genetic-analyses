@@ -1,20 +1,20 @@
 #! /usr/bin/env python
 
 '''
-This script calculates heterozygosity with the sliding window approach.
+This script calculates fixed heterozygosity (in hybrids) with the sliding window approach.
 
 #Example input:
 
 CHROM   POS REF sample1 sample2 sample3 sample4 sample5 sample6 sample7 sample8
-chr_1   1   A   W   N   N   A   N   N   N   N
+chr_1   1   W   W   N   N   W   N   N   N   N
 chr_1   2   C   Y   Y   N   C   C   N   C   N
-chr_1   3   C   N   C   N   C   C   C   C   C
+chr_1   3   S   N   S   N   S   S   S   S   S
 chr_1   4   T   T   T   N   T   T   T   T   T
 chr_2   1   A   A   A   N   A   A   A   A   A
 chr_2   2   C   C   C   N   C   C   C   C   C
 chr_2   3   C   N   N   N   N   N   N   N   N
 chr_2   4   C   C   T   C   C   C   C   C   C
-chr_2   5   T   T   C   T   Y   T   Y   T   T
+chr_2   5   Y   Y   Y   Y   Y   Y   Y   Y   Y
 chr_3   1   G   G   N   N   G   N   N   N   N
 chr_3   2   C   S   C   N   C   C   N   C   N
 chr_3   3   N   N   N   N   N   N   N   N   N
@@ -25,15 +25,15 @@ chr_3   5   G   -   N   N   G   G   G   C   G
 #Example input2:
 
 CHROM POS REF sample1 sample2 sample3 sample4 sample5 sample6 sample7 sample8
-chr_1 1 A/A A/T ./. ./. A/A ./. ./. ./. ./.
+chr_1 1 A/T A/T ./. ./. A/T ./. ./. ./. ./.
 chr_1 2 C/C T/C T/C ./. C/C C/C ./. C/C ./.
-chr_1 3 C/C ./. C/C ./. C/C C/C C/C C/C C/C
+chr_1 3 G/C ./. G/C ./. G/C G/C G/C G/C G/C
 chr_1 4 T/T T/T T/T ./. T/T T/T T/T T/T T/T
 chr_2 1 A/A A/A A/A ./. A/A A/A A/A A/A A/A
 chr_2 2 C/C C/C C/C ./. C/C C/C C/C C/C C/C
 chr_2 3 C/C ./. ./. ./. ./. ./. ./. ./. ./.
 chr_2 4 C/C C/C T/T C/C C/C C/C C/C C/C C/C
-chr_2 5 T/T T/T C/C T/T T/C T/T T/C T/T T/T
+chr_2 5 T/C T/C T/C T/C T/C T/C T/C T/C T/C
 chr_3 1 G/G G/G ./. ./. G/G ./. ./. ./. ./.
 chr_3 2 C/C G/C C/C ./. C/C C/C ./. C/C ./.
 chr_3 3 ./. ./. ./. ./. ./. ./. ./. ./. ./.
@@ -43,14 +43,13 @@ chr_3 5 G/G -/- ./. ./. G/G G/G G/G C/C G/G
 #Example output:
 
 CHROM   POS Heter
-chr_1   2.5 3.0
-chr_1   6.0 2.0
-chr_2   3.0 2.0
-chr_3   3.0 4.2
+chr_1   2.5 0.5
+chr_2   3.0 0.25
+chr_3   3.0 0.0
 
 #command:
 
-$ python calculate_Hetero_PerWindow.py -i input.tab -o output.tab -w 5 -s "sample1,sample2,sample3,sample4,sample5,sample6,sample7,sample8"
+$ python calculate_FixedHetero_PerWindow.py -i input.tab -o output.tab -w 5 -m 6 -s "sample1,sample2,sample3,sample4,sample5,sample6,sample7,sample8"
 
 #contact:
 
@@ -81,7 +80,7 @@ sampleNames = calls.checkSampleNames(args.samples, args.input)
 def meanWindow(hetero, total):
   ''' calculates mean of a window'''
   if total:
-    propHetero = sum(hetero)/sum(total)
+    propHetero = hetero/total
   else:  # is all sites are missing data
     propHetero = 'NA'
   return propHetero
@@ -117,8 +116,8 @@ with open(args.input) as datafile:
 
   print('Counting heterozygots ...')
 
-  Hwindow = []
-  Twindow = []
+  Hwindow = 0
+  Twindow = 0
   ChrPrevious = ''
   posS = ''
   posE = ''
@@ -150,8 +149,8 @@ with open(args.input) as datafile:
         HeterWindow = "NA"
       calls.processWindow(ChrPrevious, posS, posE, HeterWindow, outputFile)
       windPosEnd = windSize
-      Hwindow = []
-      Twindow = []
+      Hwindow = 0
+      Twindow = 0
       posS = pos
     elif pos > windPosEnd:  # if end of a window
       try:
@@ -160,8 +159,8 @@ with open(args.input) as datafile:
         HeterWindow = "NA"
       calls.processWindow(Chr, posS, posE, HeterWindow, outputFile)
       windPosEnd = windPosEnd+windSize
-      Hwindow = []
-      Twindow = []
+      Hwindow = 0
+      Twindow = 0
       posS = pos
       while pos > windPosEnd:  # if the gap in positions is larger than window size
         windPosEnd = windPosEnd+windSize
@@ -171,11 +170,10 @@ with open(args.input) as datafile:
 
     # count hetero
     Nmising = calls.countPerPosition(sample_charaters, 'N')
-    if Nmising < allowedN: # skip if too many Ns
-      nHerer = calls.countHeteroPerPosition(sample_charaters)
-      nTotal = float(nSample - Nmising)
-      Hwindow.append(float(nHerer))
-      Twindow.append(float(nTotal))
+    if Nmising <= allowedN:  # skip if too many Ns
+      if calls.if_FixedHetero(sample_charaters):
+        Hwindow += 1.0
+      Twindow += 1.0
 
     # track progress
     counter += 1
