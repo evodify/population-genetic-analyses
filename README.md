@@ -5,6 +5,8 @@ This repository contains a set of tools to perform various population genetic an
 
 [calculate_Hetero_PerWindow.py](calculate_Hetero_PerWindow.py) calculates heterozygosity with the sliding window approach.
 
+[calculate_PositionMean.py](calculate_PositionMean.py) calculates mean per position of a table with numbers.
+
 [calculate_FixedHetero_PerWindow.py](calculate_FixedHetero_PerWindow.py) calculates fixed heterozygosity (exist in hybrids) with the sliding window approach.
 
 [calculate_Total-Hetero.py](calculate_Total-Hetero.py) calculates total heterozygosity.
