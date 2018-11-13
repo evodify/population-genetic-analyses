@@ -37,7 +37,7 @@ groupA	groupB	groupC
 ## On separate sequences
 
 
-[ABBA-BABA_evobiR.R](ABBA-BABA_evobiR.R) performs analysis on single sequence basis in a fasta format using [evobiR](https://cran.r-project.org/web/packages/evobiR/index.html).
+[ABBA-BABA_evobiR.R](ABBA-BABA_evobiR.R) performs analysis on single sequence basis in the fasta format using [evobiR](https://cran.r-project.org/web/packages/evobiR/index.html).
 
 The script can be run on many fasta files:
 
