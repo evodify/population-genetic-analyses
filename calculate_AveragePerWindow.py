@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 '''
 This script calculates average values per sliding window.
 
@@ -49,22 +48,27 @@ Dmytro Kryvokhyzha dmytro.kryvokhyzha@evobio.eu
 
 ############################# modules #############################
 
-import calls # my custom module
+import calls  # my custom module
 
 ############################# options #############################
 
 parser = calls.CommandLineParser()
-parser.add_argument('-i', '--input', help = 'name of the input file', type=str, required=True)
-parser.add_argument('-o', '--output', help = 'name of the output file', type=str, required=True)
-parser.add_argument('-w', '--window', help = 'sliding window size', type=int, required=True)
+parser.add_argument(
+    '-i', '--input', help='name of the input file', type=str, required=True)
+parser.add_argument(
+    '-o', '--output', help='name of the output file', type=str, required=True)
+parser.add_argument(
+    '-w', '--window', help='sliding window size', type=int, required=True)
 args = parser.parse_args()
 
 ############################# functions #############################
 
+
 def meanWindow(values):
-  ''' calculates mean of a window'''
-  averageValue = sum(values)/len(values)
-  return averageValue
+    ''' calculates mean of a window'''
+    averageValue = sum(values) / len(values)
+    return averageValue
+
 
 ############################# program #############################
 
@@ -75,58 +79,59 @@ windPosEnd = windSize
 counter = 0
 
 with open(args.input) as datafile:
-  header_line = datafile.readline()
+    header_line = datafile.readline()
 
-  # make output header
-  outputFile = open(args.output, 'w')
-  outputFile.write(header_line)
+    # make output header
+    outputFile = open(args.output, 'w')
+    outputFile.write(header_line)
 
-  print('Processing the data  ...')
+    print('Processing the data  ...')
 
-  Vwindow = []
-  ChrPrevious = ''
-  posS = ''
-  posE = ''
-  for line in datafile:
-    words = line.split()
-    Chr = words[0]
-    pos = int(words[1])
-    indVal = float(words[2])
+    Vwindow = []
+    ChrPrevious = ''
+    posS = ''
+    posE = ''
+    for line in datafile:
+        words = line.split()
+        Chr = words[0]
+        pos = int(words[1])
+        indVal = float(words[2])
 
-    # to store the values of a previous line
-    if not ChrPrevious:
-      ChrPrevious = Chr
-    if not posS:
-      posS = pos
-    if not posE:
-      posE = pos
+        # to store the values of a previous line
+        if not ChrPrevious:
+            ChrPrevious = Chr
+        if not posS:
+            posS = pos
+        if not posE:
+            posE = pos
 
-    # if window size is reached output the results
-    if Chr > ChrPrevious:  # if end of a chromosome
-      meanValWindow = meanWindow(Vwindow)
-      calls.processWindow(ChrPrevious, posS, posE, meanValWindow, outputFile)
-      windPosEnd = windSize
-      Vwindow = []
-      posS = pos
-    elif pos > windPosEnd:  # if end of a window
-      meanValWindow = meanWindow(Vwindow)
-      calls.processWindow(Chr, posS, posE, meanValWindow, outputFile)
-      windPosEnd = windPosEnd+windSize
-      Vwindow = []
-      posS = pos
-      while pos > windPosEnd:  # if the gap in positions is larger than window size
-        windPosEnd = windPosEnd+windSize
+        # if window size is reached output the results
+        if Chr != ChrPrevious:  # if end of a chromosome
+            meanValWindow = meanWindow(Vwindow)
+            calls.processWindow(ChrPrevious, posS, posE, meanValWindow,
+                                outputFile)
+            windPosEnd = windSize
+            Vwindow = []
+            posS = pos
+        elif pos > windPosEnd:  # if end of a window
+            meanValWindow = meanWindow(Vwindow)
+            calls.processWindow(Chr, posS, posE, meanValWindow, outputFile)
+            windPosEnd = windPosEnd + windSize
+            Vwindow = []
+            posS = pos
+            while pos > windPosEnd:  # gap is larger than window size
+                windPosEnd = windPosEnd + windSize
 
-    ChrPrevious = Chr
-    posE = pos
+        ChrPrevious = Chr
+        posE = pos
 
-    # append values
-    Vwindow.append(indVal)
+        # append values
+        Vwindow.append(indVal)
 
-    # track progress
-    counter += 1
-    if counter % 1000000 == 0:
-      print str(counter), "lines processed"
+        # track progress
+        counter += 1
+        if counter % 1000000 == 0:
+            print str(counter), "lines processed"
 
 # process the last window
 meanValWindow = meanWindow(Vwindow)
@@ -135,4 +140,3 @@ calls.processWindow(Chr, posS, pos, meanValWindow, outputFile)
 datafile.close()
 outputFile.close()
 print('Done!')
-
