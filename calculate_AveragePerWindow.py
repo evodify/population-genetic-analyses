@@ -10,7 +10,7 @@ chr1    4696    1       3       5       13      6
 chr1    6240    5       10      5       15      19
 chr1    6244    5       10      5       16      20
 chr1    6527    9       20      12      20      36
-chr1    6544    9       21      16      20      36
+chr1    6544    NA       21      16      20      36
 chr1    6665    5       17      12      15      32
 chr1    6676    5       22      14      18      31
 chr1    6677    5       22      14      18      31
@@ -22,7 +22,7 @@ chr1    9185    15      31      18      42      44
 chr1    9218    15      30      21      45      45
 chr1    9374    16      28      18      45      43
 chr1    9378    16      27      19      43      42
-chr1    9411    18      24      20      50      42
+chr1    9411    18      24      NA      50      42
 chr1    10743   10      17      16      34      28
 chr1    11105   47      36      46      66      69
 chr1    11162   14      24      32      43      55
@@ -30,7 +30,7 @@ chr1    11331   45      34      82      41      87
 chr1    11368   51      41      107     57      101
 chr1    13956   17      15      33      38      32
 chr1    14548   5       4       10      9       8
-chr1    14670   22      16      51      63      22
+chr1    14670   22      16      51      NA      22
 chr1    14686   22      35      57      63      42
 chr1    19796   54      32      43      57      49
 chr1    19798   54      32      45      56      48
@@ -40,8 +40,8 @@ chr1    19798   54      32      45      56      48
 
 CHROM  POS  sample1  sample2  sample3  sample4  sample5
 chr1	3809	1	10	9	19	17
-chr1	7825	11	20	14	27	32
-chr1	12714	26	25	48	46	49
+chr1	7825	11	20	13	27	32
+chr1	12714	26	25	48	44	49
 chr1	19797	54	32	44	57	49
 
 
@@ -75,9 +75,15 @@ args = parser.parse_args()
 def meanWindow(dictList):
     ''' calculates mean of a window'''
     for k in dictList:
-        values = map(float, dictList[k])
-        averageValue = sum(values) / len(values)
-        dictList[k] = int(round(averageValue))
+        values = []
+        for val in dictList[k]:
+            if val != 'NA':
+                values.append(float(val))
+        if len(values) > 0:
+            averageValue = sum(values) / len(values)
+            dictList[k] = int(round(averageValue))
+        else:
+            dictList[k] = 'NA'
     return dictList
 
 def createNewDict(NamesList):
