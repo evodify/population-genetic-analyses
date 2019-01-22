@@ -1,13 +1,18 @@
 # Population Genetic Analyses
+
 This repository contains a set of tools to perform various population genetic analyses on genomic data.
 
 [ABBA-BABA](ABBA-BABA) folder contains scripts to run the ABBA-BABA test of admixture.
 
-[calculate_Hetero_PerWindow.py](calculate_Hetero_PerWindow.py) calculates heterozygosity with the sliding window approach.
-
-[calculate_PositionMean.py](calculate_PositionMean.py) calculates mean per position of a table with numbers.
+[calculate_AveragePerWindow.py](calculate_AveragePerWindow.py) calculates average values per sliding window.
 
 [calculate_FixedHetero_PerWindow.py](calculate_FixedHetero_PerWindow.py) calculates fixed heterozygosity (exist in hybrids) with the sliding window approach.
+
+[calculate_Hetero_PerWindow.py](calculate_Hetero_PerWindow.py) calculates heterozygosity with the sliding window approach.
+
+[calculate_iHSproportion.py](calculate_iHSproportion.py) calculates fractions of SNPs with [iHS](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.0040072) values above 2.0 over genomic windows of specified size.
+
+[calculate_PositionMean.py](calculate_PositionMean.py) calculates mean per position of a table with numbers.
 
 [calculate_Total-Hetero.py](calculate_Total-Hetero.py) calculates total heterozygosity.
 

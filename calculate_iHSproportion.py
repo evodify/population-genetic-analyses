@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 '''
-This script calculates fractions of SNPs with values above 2.0 over genomic
-windows of specified size.
+This script calculates fractions of SNPs with iHS values above 2.0 over
+genomic windows of specified size.
 
 #Example input:
 
