@@ -129,16 +129,16 @@ with open(args.input) as datafile:
     for line in datafile:
         words = line.split()
         Chr = words[0]
-        pos = int(words[1])
+        pos = int(float(words[1]))
         indVal = words[2:]
 
         # to store the values of a previous line
         if not ChrPrevious:
             ChrPrevious = Chr
         if not posS:
-            posS = pos
+            posS = windPosEnd - windSize
         if not posE:
-            posE = pos
+            posE = windPosEnd
 
         # if window size is reached output the results
         if Chr != ChrPrevious:  # if end of a chromosome
@@ -148,7 +148,7 @@ with open(args.input) as datafile:
                                 meanValWindowP, outputFile)
             windPosEnd = windSize
             windowDict = createNewDict(sampleNames)
-            posS = pos
+            posS = windPosEnd - windSize
         elif pos > windPosEnd:  # if end of a window
             meanValWindow = meanWindow(windowDict)
             meanValWindowP = printWindow(meanValWindow, sampleNames)
@@ -156,12 +156,12 @@ with open(args.input) as datafile:
                                 meanValWindowP, outputFile)
             windPosEnd = windPosEnd + windSize
             windowDict = createNewDict(sampleNames)
-            posS = pos
+            posS = windPosEnd - windSize
             while pos > windPosEnd:  # gap is larger than window size
                 windPosEnd = windPosEnd + windSize
 
         ChrPrevious = Chr
-        posE = pos
+        posE = windPosEnd
 
         # append values
         for s in xrange(len(sampleNames)):
@@ -175,7 +175,7 @@ with open(args.input) as datafile:
 # process the last window
 meanValWindow = meanWindow(windowDict)
 meanValWindowP = printWindow(meanValWindow, sampleNames)
-calls.processWindow(Chr, posS, posE,
+calls.processWindow(Chr, posS, windPosEnd,
                     meanValWindowP, outputFile)
 
 datafile.close()
