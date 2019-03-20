@@ -77,7 +77,7 @@ def meanWindow(dictList):
     for k in dictList:
         values = []
         for val in dictList[k]:
-            if val != 'NA':
+            if val != 'NA' and val != "Inf" and val != "-Inf":
                 values.append(float(val))
         if len(values) > 0:
             averageValue = sum(values) / len(values)
