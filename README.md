@@ -4,7 +4,9 @@ This repository contains a set of tools to perform various population genetic an
 
 [ABBA-BABA](ABBA-BABA) folder contains scripts to run the ABBA-BABA test of admixture.
 
-[calculate_AveragePerWindow.py](calculate_AveragePerWindow.py) calculates average values per sliding window.
+[calculate_AveragePerWindow.py](calculate_AveragePerWindow.py) calculates average values for non-overlapping sliding windows.
+
+[calculate_WindowAverage_perSNP.py](calculate_WindowAverage_perSNP.py) calculates average values for a window centered on each SNP.
 
 [calculate_MedianPerWindow.py](calculate_AveragePerWindow.py) calculates median values per sliding window.
 
