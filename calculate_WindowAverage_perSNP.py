@@ -66,12 +66,19 @@ parser.add_argument(
     '-o', '--output', help='name of the output file', type=str, required=True)
 parser.add_argument(
     '-w', '--window', help='sliding window size', type=int, required=True)
+parser.add_argument(
+    '-m', '--min', help='minimum number of SNPs to keep window',
+    type=int, required=True, default=1)
 args = parser.parse_args()
 
 ############################# functions #############################
 
-def average(lst):
-    return sum(lst)/len(lst)
+def average(lst, minNumberSNPs):
+    if len(lst) >= minNumberSNPs:
+        avg = sum(lst)/len(lst)
+    else:
+        avg = 'NA'
+    return avg
 
 def slideWindow():
     for i in posList:
@@ -84,7 +91,7 @@ def slideWindow():
         windowEnd = i+windSize
         endIndex = bisect.bisect(posList, windowEnd)
 
-        windowAverage = average(statsList[startIndex:endIndex])
+        windowAverage = average(statsList[startIndex:endIndex], minSNPs)
 
         outputFile.write("%s\t%s\t%s\n" % (ChrPrevious, i, windowAverage))
 
@@ -94,6 +101,7 @@ print('Opening the file...')
 
 windSize = args.window/2
 counter = 0
+minSNPs = args.min 
 
 with open(args.input) as datafile:
     header_line = datafile.readline()
